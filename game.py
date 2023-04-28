@@ -64,3 +64,46 @@ while True:
 
     # Atualizando a tela
     pygame.display.update()
+    # Definindo a pontuação inicial
+    score = 0
+
+    # Loop principal do jogo
+    while True:
+        # Lidando com eventos
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                quit()
+
+        # Limpando a tela
+        screen.fill(BACKGROUND_COLOR)
+
+        # Desenhando o avatar
+        screen.blit(avatar, avatar_rect)
+
+        # Lidando com a lógica de movimento do avatar
+        keys = pygame.key.get_pressed()
+        avatar_rect.x += (keys[K_RIGHT] - keys[K_LEFT]) * AVATAR_SPEED
+        avatar_rect.y += (keys[K_DOWN] - keys[K_UP]) * AVATAR_SPEED
+        avatar_rect.clamp_ip(screen.get_rect())
+
+        # Desenhando o objetivo
+        pygame.draw.rect(screen, OBJECTIVE_COLOR, (objective_x, objective_y, *OBJECTIVE_SIZE))
+
+        # Lidando com a lógica de colisão entre o avatar e o objetivo
+        if avatar_rect.colliderect(pygame.Rect(objective_x, objective_y, *OBJECTIVE_SIZE)):
+            print("Você encontrou o objetivo!")
+            objective_x = 500
+            objective_y = 300
+            score += 10  # Incrementando a pontuação em 10 pontos
+
+        # Desenhando a pontuação na tela
+        font = pygame.font.SysFont(None, 32)
+        score_text = font.render(f"Score: {score}", True, (255, 255, 255))
+        screen.blit(score_text, (10, 10))
+
+        # Limitando a taxa de atualização de frames por segundo
+        clock.tick(60)
+
+        # Atualizando a tela
+        pygame.display.update()
